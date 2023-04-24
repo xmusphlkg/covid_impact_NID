@@ -27,39 +27,35 @@ remove(list = ls())
 
 # data load ---------------------------------------------------------------
 
-source('theme_set.R')
+source('./script/theme_set.R')
 
-datafile_manual <- read.xlsx('./data/df_load_20220902.xlsx', sheet = "Sheet 1")
-datafile_manual$date <- convertToDate(datafile_manual$date)
+datafile_analysis <- read.xlsx('./data/Nation.xlsx', detectDates = T)
 
-datafile_analysis <- datafile_manual %>% 
-     filter(religion == '全国' & type == 'inci' & disease_1 != 'remove') |> 
-     filter(date >= as.Date('2008/01/01'))
-
-split_date <- max(datafile_analysis$date)
-train_length <- 173
+split_date <- as.Date('2022/12/1')
+train_length <- 12*12 + 35
 forcast_length <- 12
 
 disease_list <- c('百日咳', '丙肝', '戊肝', '布病', '登革热', 
                   '肺结核', '风疹', '急性出血性结膜炎', '甲肝', 
                   '痢疾', '淋病', '流行性出血热', '艾滋病',
-                  '流行性腮腺炎', '麻疹', '梅毒', '疟疾', '其它感染性腹泻病',
+                  '流行性腮腺炎', '梅毒', '疟疾', '其它感染性腹泻病',
                   '伤寒+副伤寒', '乙肝', '手足口病', '猩红热',
                   '乙型脑炎', '包虫病', '斑疹伤寒')
 disease_name <- c('Pertussis', 'HCV', 'HEV',
                   'Brucellosis', 'Dengue fever', 'Tuberculosis',
                   'Rubella', 'Acute hemorrhagic conjunctivitis', 'HAV',
                   'Dysentery', 'Gonorrhea', 'HFRS',
-                  'AIDS', 'Mumps', 'Measles',
+                  'AIDS', 'Mumps', 
                   'Syphilis', 'Malaria', 'Other infectious diarrhea',
                   'Typhoid fever and paratyphoid fever', 'HBV', 'HFMD',
-                  'scarlet fever', 'Japanese encephalitis', 'Hydatidosis', 'Typhus')
+                  'Scarlet fever', 'Japanese encephalitis', 'Hydatidosis', 'Typhus')
 
 # data clean --------------------------------------------------------------
 
 i <- 5
 
 auto_select_function <- function(i){
+     set.seed(202208)
      datafile_single <- datafile_analysis %>% 
           filter(disease_1 == disease_list[i]) %>% 
           select(date, disease_1, value) %>% 
@@ -119,7 +115,7 @@ auto_select_function <- function(i){
      
      fit_goodness <- data.frame(
           Method = 'SARIMA',
-          Train = func_rmse(outcome_plot_1$simu, outcome_plot_1$fit)
+          Train = postResample(outcome_plot_1$simu, outcome_plot_1$fit)
      )
      
      fig1 <- ggplot()+
@@ -187,7 +183,7 @@ auto_select_function <- function(i){
           rbind(
                data.frame(
                     Method = 'Grey Model',
-                    Train = func_rmse(outcome_plot_1$simu, outcome_plot_1$fit)
+                    Train = postResample(outcome_plot_1$simu, outcome_plot_1$fit)
                )
           )
      
@@ -254,7 +250,7 @@ auto_select_function <- function(i){
           rbind(
                data.frame(
                     Method = 'Neural Network',
-                    Train = func_rmse(outcome_plot_1$simu, outcome_plot_1$fit)
+                    Train = postResample(outcome_plot_1$simu[!is.na(outcome_plot_1$fit)], outcome_plot_1$fit[!is.na(outcome_plot_1$fit)])
                     )
           )
      
@@ -334,7 +330,7 @@ auto_select_function <- function(i){
                rbind(
                     data.frame(
                          Method = 'STL',
-                         Train = func_rmse(outcome_plot_1$simu, outcome_plot_1$fit)
+                         Train = postResample(outcome_plot_1$simu, outcome_plot_1$fit)
                          )
                )
           
@@ -408,7 +404,7 @@ auto_select_function <- function(i){
           rbind(
                data.frame(
                     Method = 'ETS',
-                    Train = func_rmse(outcome_plot_1$simu, outcome_plot_1$fit)
+                    Train = postResample(outcome_plot_1$simu, outcome_plot_1$fit)
                     )
           )
      
@@ -490,7 +486,7 @@ auto_select_function <- function(i){
           rbind(
                data.frame(
                     Method = 'Hybrid',
-                    Train = func_rmse(outcome_plot_1$simu, outcome_plot_1$fit)
+                    Train = postResample(outcome_plot_1$simu[!is.na(outcome_plot_1$fit)], outcome_plot_1$fit[!is.na(outcome_plot_1$fit)])
                     )
           )
      
@@ -542,7 +538,7 @@ auto_select_function <- function(i){
           ets = mods$ETS,
           stl = mods$STL,
           hybrid = outcome_plot_2$mean,
-          date = seq.Date(as.Date('2022/06/01'), by = 'month', length.out = forcast_length)
+          date = seq.Date(split_date, by = 'month', length.out = forcast_length)
      )
      
      max_value <- max(df_mods[,-7], datafile_single$value, max_case, na.rm = T)
@@ -593,32 +589,53 @@ auto_select_function <- function(i){
                                             'ETS', 'SARIMA', 'Hybrid'),
                                  labels = c('Grey Model', 'Neural Network', 'STL',
                                             'ETS', 'SARIMA', 'Hybrid*')),
-                 Train = round(Train)) |> 
+                 Train = round(Train, 2)) |> 
           arrange(Method)
      datafile_table[is.na(datafile_table)] <- ""
+     datafile_table$Index <- str_remove_all(rownames(datafile_table), "[0-9]+")
      
-     table <- ggtexttable(datafile_table,
-                          rows = NULL,
-                          cols = c('Method', 'Train'),
-                          theme = ttheme("blank", base_size = 10, padding = unit(c(5, 5), "mm"))) |>
-          tab_add_hline(at.row = nrow(datafile_table)+1, row.side = "bottom", linewidth = 1) |>
+     table1 <- ggtexttable(datafile_table[datafile_table$Index == "RMSE", 1:2],
+                           rows = NULL,
+                           cols = c('Method', 'Train'),
+                           theme = ttheme("blank", base_size = 10, padding = unit(c(20, 5), "mm"))) |>
+          tab_add_hline(at.row = nrow(datafile_table)/3+1, row.side = "bottom", linewidth = 1) |>
           tab_add_hline(at.row = 1:2, row.side = "top", linewidth = 2) |> 
-          tab_add_title(LETTERS[8], face = "bold", size = 14) |> 
-          tab_add_footnote('*Hybrid: Combined\nSARIMA, ETS, STL\nand Neural Network model', 
+          tab_add_title(paste0(LETTERS[8], " : RMSE of Models"), face = "bold", size = 14) |> 
+          tab_add_footnote('*Hybrid: Combined SARIMA, ETS, STL\nand Neural Network model', 
+                           just = "left",hjust = 1,size = 10)
+     table2 <- ggtexttable(datafile_table[datafile_table$Index == "Rsquared", 1:2],
+                           rows = NULL,
+                           cols = c('Method', 'Train'),
+                           theme = ttheme("blank", base_size = 10, padding = unit(c(20, 5), "mm"))) |>
+          tab_add_hline(at.row = nrow(datafile_table)/3+1, row.side = "bottom", linewidth = 1) |>
+          tab_add_hline(at.row = 1:2, row.side = "top", linewidth = 2) |> 
+          tab_add_title(paste0(LETTERS[9], " : R-squared of Models"), face = "bold", size = 14) |> 
+          tab_add_footnote('*Hybrid: Combined SARIMA, ETS, STL\nand Neural Network model', 
+                           just = "left",hjust = 1,size = 10)
+     table3 <- ggtexttable(datafile_table[datafile_table$Index == "MAE", 1:2],
+                           rows = NULL,
+                           cols = c('Method', 'Train'),
+                           theme = ttheme("blank", base_size = 10, padding = unit(c(20, 5), "mm"))) |>
+          tab_add_hline(at.row = nrow(datafile_table)/3+1, row.side = "bottom", linewidth = 1) |>
+          tab_add_hline(at.row = 1:2, row.side = "top", linewidth = 2) |> 
+          tab_add_title(paste0(LETTERS[10], " : MAE of Models"), face = "bold", size = 14) |> 
+          tab_add_footnote('*Hybrid: Combined SARIMA, ETS, STL\nand Neural Network model', 
                            just = "left",hjust = 1,size = 10)
      
-     fig_com <- fig1 + table + plot_layout(widths = c(1.7, 1))
+     fig_table <- table1 + table2 + table3 +
+          plot_layout(ncol = 3)
      
      # save --------------------------------------------------------------------
      
      fig_ts <- fig_grey_1 + fig_nnet_1 + fig_stl_1 + fig_ets_1 + fig_arima_1 + fig_hyb_1+
           plot_layout(ncol = 2, guides = 'collect')&
-          theme(legend.position = 'bottom',
+          theme(legend.position = 'top',
                 plot.margin = margin(5, 15, 5, 5))
      
-     cowplot::plot_grid(fig_ts, fig_com, ncol = 1, rel_heights = c(3, 1))
+     fig <- cowplot::plot_grid(fig_ts, fig1, fig_table, ncol = 1, rel_heights = c(3, 1, 1))
      
      ggsave(filename = paste0('./fig/20221013/B_', disease_name[i],'.pdf'),
+            fig,
             width = 14, height = 15, family = "Times New Roman",
             limitsize = FALSE, device = cairo_pdf)
      fit_goodness$disease <- disease_name[i]
@@ -643,6 +660,7 @@ clusterEvalQ(cl, {
      library(greyforecasting)
      # library(opera)
      library(forecastHybrid)
+     library(caret)
      
      # loadfonts("pdf")
      library(patchwork)
@@ -660,7 +678,7 @@ clusterEvalQ(cl, {
 clusterExport(cl, c('datafile_analysis', 'disease_list', 'disease_name', 
                     'fill_color', 'func_rmse', 'theme_set'), 
               envir = environment())
-outcome <- parLapply(cl, 1:25, auto_select_function)
+outcome <- parLapply(cl, 1:24, auto_select_function)
 stopCluster(cl)
 
 datafile_outcome <- do.call('rbind', outcome)

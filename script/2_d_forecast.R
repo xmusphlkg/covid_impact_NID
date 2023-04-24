@@ -21,64 +21,80 @@ library(paletteer)
 
 library(doParallel)
 
-set.seed(202208)
+Sys.setlocale(locale = 'en')
+
+layout <- '
+ABCDE##
+FGHIJKL
+MNOPQRS
+TVWXY##
+'
 
 # data load ---------------------------------------------------------------
 
-Sys.setlocale("LC_TIME","English")
+source('./script/theme_set.R')
 
-source('theme_set.R')
-
-datafile_manual <- read.xlsx('./data/df_load_20220902.xlsx', sheet = "Sheet 1")
-datafile_manual$date <- convertToDate(datafile_manual$date)
-
-datafile_analysis <- datafile_manual %>% 
-     filter(religion == '全国' & type == 'inci' & disease_1 != 'remove') |> 
-     filter(date >= as.Date('2008/01/01'))
+datafile_analysis <- read.xlsx('./data/Nation.xlsx', 
+                               sheet = "Sheet 1",
+                               detectDates = T)
 
 datafile_class <- read.xlsx('./data/disease_class.xlsx')
 
-datafile_class_A <- read.xlsx('./data/model_select_A.xlsx') |> 
-     filter(!is.na(best_Method)) |> 
-     left_join(datafile_class, by = c(disease = 'diseasename')) |> 
-     arrange(class, disease)
+datafile_class_A <- read.xlsx('./outcome/model_select_A.xlsx',
+                              sheet = 'result') |>
+     select(D, Final) |>
+     left_join(datafile_class, by = c(D = 'diseasename')) |> 
+     rename(Method = 'Final') |> 
+     filter(!is.na(class))
 
-datafile_class_B <- read.xlsx('./data/model_select_B.xlsx') |> 
-     filter(!is.na(best_Method)) |> 
-     left_join(datafile_class, by = c(disease = 'diseasename')) |> 
-     arrange(class, disease)
+datafile_class_B <- read.xlsx('./outcome/model_select_B.xlsx',
+                              sheet = 'result') |>
+     select(D, Final) |>
+     left_join(datafile_class, by = c(D = 'diseasename')) |> 
+     rename(Method = 'Final') |> 
+     filter(!is.na(class))
 
 disease_list <- c('百日咳', '丙肝', '戊肝', '布病', '登革热', 
                   '肺结核', '风疹', '急性出血性结膜炎', '甲肝', 
                   '痢疾', '淋病', '流行性出血热', '艾滋病',
-                  '流行性腮腺炎', '麻疹', '梅毒', '疟疾', '其它感染性腹泻病',
+                  '流行性腮腺炎', '梅毒', '疟疾', '其它感染性腹泻病',
                   '伤寒+副伤寒', '乙肝', '手足口病', '猩红热',
                   '乙型脑炎', '包虫病', '斑疹伤寒')
 disease_name <- c('Pertussis', 'HCV', 'HEV',
                   'Brucellosis', 'Dengue fever', 'Tuberculosis',
                   'Rubella', 'Acute hemorrhagic conjunctivitis', 'HAV',
                   'Dysentery', 'Gonorrhea', 'HFRS',
-                  'AIDS', 'Mumps', 'Measles',
+                  'AIDS', 'Mumps',
                   'Syphilis', 'Malaria', 'Other infectious diarrhea',
                   'Typhoid fever and paratyphoid fever', 'HBV', 'HFMD',
-                  'scarlet fever', 'Japanese encephalitis', 'Hydatidosis', 'Typhus')
+                  'Scarlet fever', 'Japanese encephalitis', 'Hydatidosis', 'Typhus')
 
 datafile_class_A <- data.frame(disease_list = disease_list,
                              disease_name = disease_name) |> 
-     right_join(datafile_class_A, by = c('disease_name' = 'disease')) |> 
+     right_join(datafile_class_A, by = c('disease_name' = 'D')) |> 
+     mutate(disease_name = factor(disease_name,
+                                  levels = c('HBV', 'HCV', 'Syphilis', 'AIDS', 'Gonorrhea',
+                                             'HAV', 'HFMD', 'HEV', 'Other infectious diarrhea', 'Typhoid fever and paratyphoid fever', 'Acute hemorrhagic conjunctivitis', 'Dysentery',
+                                             'Dengue fever', 'Brucellosis', 'Malaria', 'Japanese encephalitis', 'HFRS', 'Hydatidosis', 'Typhus',
+                                             'Rubella', 'Mumps', 'Pertussis', 'Tuberculosis', 'Scarlet fever'))) |> 
      arrange(class, disease_name)
 datafile_class_A$id <- 1:nrow(datafile_class_A)
 
 datafile_class_B <- data.frame(disease_list = disease_list,
                                disease_name = disease_name) |> 
-     right_join(datafile_class_B, by = c('disease_name' = 'disease')) |> 
+     right_join(datafile_class_B, by = c('disease_name' = 'D')) |> 
+     mutate(disease_name = factor(disease_name,
+                                  levels = c('HBV', 'HCV', 'Syphilis', 'AIDS', 'Gonorrhea',
+                                             'HAV', 'HFMD', 'HEV', 'Other infectious diarrhea', 'Typhoid fever and paratyphoid fever', 'Acute hemorrhagic conjunctivitis', 'Dysentery',
+                                             'Dengue fever', 'Brucellosis', 'Malaria', 'Japanese encephalitis', 'HFRS', 'Hydatidosis', 'Typhus',
+                                             'Rubella', 'Mumps', 'Pertussis', 'Tuberculosis', 'Scarlet fever'))) |> 
      arrange(class, disease_name)
 datafile_class_B$id <- 1:nrow(datafile_class_B)
 
 split_date <- as.Date("2019/12/1")
 train_length <- 12*12
 test_length <- 0
-forcast_length <- test_length+12+12+5+12*3
+forcast_length <- test_length+12+12+13+12*3
 date_value <- seq.Date(as.Date('2022-6-1'), as.Date('2025-5-1'), 'month')
 
 # data clean --------------------------------------------------------------
@@ -122,7 +138,7 @@ auto_analysis_function <- function(index){
              start = c(as.numeric(format(min(datafile_single$date), "%Y")),
                        as.numeric(format(min(datafile_single$date), "%m"))))
      
-     ts_train_A <- head(ts_obse_A, train_length)
+     ts_train_A <- ts_obse_A
      # ts_test_A <- tail(ts_obse_A, test_length)
      ts_train_B <- ts_obse_B
      
@@ -140,7 +156,7 @@ auto_analysis_function <- function(index){
                upper_80 = as.matrix(outcome$upper[,1]),
                upper_95 = as.matrix(outcome$upper[,2])
           ) |> 
-               filter(date >= as.Date('2022-06-01'))
+               filter(date >= as.Date('2023-02-01'))
      }
      
      if (datafile_class_A$Method[index] == 'STL'){
@@ -154,7 +170,7 @@ auto_analysis_function <- function(index){
                upper_80 = as.matrix(outcome$upper[,1]),
                upper_95 = as.matrix(outcome$upper[,2])
           ) |> 
-               filter(date >= as.Date('2022-06-01'))
+               filter(date >= as.Date('2023-02-01'))
      }
      
      if (datafile_class_A$Method[index] == 'ETS'){
@@ -168,7 +184,7 @@ auto_analysis_function <- function(index){
                upper_80 = as.matrix(outcome$upper[,1]),
                upper_95 = as.matrix(outcome$upper[,2])
           ) |> 
-               filter(date >= as.Date('2022-06-01'))
+               filter(date >= as.Date('2023-02-01'))
      }
      
      if (datafile_class_A$Method[index] == 'Neural Network'){
@@ -184,7 +200,7 @@ auto_analysis_function <- function(index){
                upper_80 = NA,
                upper_95 = NA
           ) |> 
-               filter(date >= as.Date('2022-06-01'))
+               filter(date >= as.Date('2023-02-01'))
      }
      
      if (datafile_class_A$Method[index] == 'Grey Model'){
@@ -215,7 +231,7 @@ auto_analysis_function <- function(index){
                upper_80 = as.matrix(outcome$upper[,1]),
                upper_95 = as.matrix(outcome$upper[,2])
           ) |> 
-               filter(date >= as.Date('2022-06-01'))
+               filter(date >= as.Date('2023-02-01'))
      }
      
      max_case <- max(outcome_plot_2$mean)
@@ -312,9 +328,6 @@ auto_analysis_function <- function(index){
      outcome_plot_3 <- outcome_plot_3 |> 
           mutate_at(vars(contains('er')), as.numeric)
      
-     write.xlsx(cbind(outcome_plot_2, outcome_plot_3),
-                paste0('./outcome/simulate data/B_', datafile_class_A$disease_name[index], '.xlsx'))
-     
      outcome_plot_2[outcome_plot_2<0] <- 0
      outcome_plot_3[outcome_plot_3<0] <- 0
      
@@ -326,17 +339,12 @@ auto_analysis_function <- function(index){
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = mean, colour = 'Without COVID-19'),
                     size = 0.7, data = outcome_plot_2)+
-          geom_ribbon(mapping = aes(x = date, ymin = lower_95, ymax = upper_95, fill = 'red'),
+          geom_ribbon(mapping = aes(x = date, ymin = lower_95, ymax = upper_95, fill = '#DC0000B2'),
                       data = outcome_plot_2, alpha = 0.3, show.legend = F)+
           geom_line(mapping = aes(x = date, y = mean, colour = 'Within COVID-19'),
                     size = 0.7, data = outcome_plot_3)+
-          geom_ribbon(mapping = aes(x = date, ymin = lower_95, ymax = upper_95, fill = '#3C5488B2'),
+          geom_ribbon(mapping = aes(x = date, ymin = lower_95, ymax = upper_95, fill = '#3C5488FF'),
                       data = outcome_plot_3, alpha = 0.3, show.legend = F)+
-          # annotate('text', x = median(outcome_plot_2$date, 12), y = Inf, 
-          #          label = paste0(diff_value_1, '\n(', sprintf('%.1f', diff_label_1), '%)'),
-          #          color = ifelse(diff_value_1 > 0, 'red', '#019875FF'),
-          #          vjust = 1.1,
-          #          size = 6)+
           coord_cartesian(ylim = c(0, NA))+
           scale_x_date(expand = expansion(add = c(0, 31)),
                        date_labels = '%Y',
@@ -345,13 +353,20 @@ auto_analysis_function <- function(index){
                              breaks = pretty(c(min_value, max_value, 0)),
                              limits = range(pretty(c(min_value, max_value, 0))))+
           scale_color_manual(values = c('Within COVID-19' = "#DC0000B2",
-                                        'Without COVID-19' = '#3C5488B2'))+
+                                        'Without COVID-19' = '#3C5488FF'))+
           theme_set()+
           theme(legend.position = 'bottom')+
           labs(x = ifelse(index > 20, "Date", ''),
                y = ifelse(index %in% c(5*0:4+1),'Cases', ''),
                color = '',
                title = paste0(LETTERS[index], ': ', datafile_class_A$disease_name[index]))
+     
+     names(outcome_plot_2) <- paste0('Without', names(outcome_plot_2))
+     names(outcome_plot_3) <- paste0('Within', names(outcome_plot_3))
+     outcome_plot_3$disease_1 <- datafile_class_A$disease_list[index]
+     
+     write.xlsx(cbind(outcome_plot_2, outcome_plot_3),
+                paste0('./outcome/data/C_', datafile_class_A$disease_name[index], '.xlsx'))
      remove(outcome_plot_2, outcome_plot_3, index)
      return(fig1)
 }
@@ -387,20 +402,18 @@ clusterExport(cl, c('datafile_analysis', 'datafile_class_A', 'datafile_class_B',
                     'forcast_length', 'split_date', 'train_length', 'test_length',
                     'fill_color', 'func_rmse', 'theme_set', 'date_value'), 
               envir = environment())
-outcome <- parLapply(cl, 1:25, auto_analysis_function)
+outcome <- parLapply(cl, 1:24, auto_analysis_function)
 
 stopCluster(cl)
 
 plot <- do.call(wrap_plots, outcome)
 
-ggsave('./fig/20221024_COVID_simulate.pdf', 
-       plot + plot_layout(ncol = 5, guides = 'collect')&
-            theme(legend.position = 'bottom',
-                  panel.background = element_blank(),
-                  plot.background = element_blank()),
+ggsave('./outcome/publish/fig6.pdf',
+       plot + plot_layout(design = layout, guides = 'collect')&
+            theme(legend.position = 'bottom'),
        family = "Times New Roman",
        limitsize = FALSE, device = cairo_pdf,
-       width = 16, height = 16)
+       width = 25, height = 14)
 
 
 

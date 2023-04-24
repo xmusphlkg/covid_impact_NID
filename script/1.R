@@ -20,7 +20,7 @@ remove(list = ls())
 
 source('theme_set.R')
 # load(file = '../data/source/source.RData')
-datafile_manual <- read.xlsx('./data/df_load_202205.xlsx', sheet = "Sheet 1")
+datafile_manual <- read.xlsx('./data/df_load_20220902.xlsx', sheet = "Sheet 1")
 datafile_manual$date <- convertToDate(datafile_manual$date)
 
 datafile_analysis <- datafile_manual %>% 

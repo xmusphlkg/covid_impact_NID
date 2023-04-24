@@ -1,0 +1,29 @@
+disease,class,level,value
+AIDS,Blood borne and sexually transmitted diseases,B,668135
+Acute hemorrhagic conjunctivitis,Intestinal infectious diseases,C,739915
+Brucellosis,Natural focus disease,B,702954
+Dengue fever,Natural focus disease,B,93611
+Dysentery,Intestinal infectious diseases,C,2317599
+Gonorrhea,Blood borne and sexually transmitted diseases,B,1691294
+HAV,Intestinal infectious diseases,B,378150
+HBV,Blood borne and sexually transmitted diseases,B,16486035
+HCV,Blood borne and sexually transmitted diseases,B,3021146
+HEV,Intestinal infectious diseases,B,390737
+HFMD,Intestinal infectious diseases,C,25329288
+HFRS,Natural focus disease,B,152574
+Hydatidosis,Natural focus disease,C,55256
+Japanese encephalitis,Natural focus disease,B,22035
+Malaria,Natural focus disease,B,78464
+Mumps,Respiratory infectious disease,C,3892586
+Other infectious diarrhea,Intestinal infectious diseases,C,15046707
+Pertussis,Respiratory infectious disease,B,146228
+Rubella,Respiratory infectious disease,C,426691
+Scarlet fever,Respiratory infectious disease,B,702495
+Syphilis,Blood borne and sexually transmitted diseases,B,6611880
+Tuberculosis,Respiratory infectious disease,B,14088255
+Typhoid fever and paratyphoid fever,Intestinal infectious diseases,B,173991
+Typhus,Natural focus disease,C,25151
+A,legend,A,20000
+B,legend,A,2e+05
+C,legend,A,2e+06
+D,legend,A,2.6e+07
