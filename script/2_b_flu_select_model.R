@@ -133,7 +133,7 @@ auto_select_function <- function(i){
      
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    linewidth = 0.7, data = datafile_single)+
+                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
           geom_line(mapping = aes(x = date, y = fit, colour = 'Fitted'), 
                     linewidth = 0.7, data = outcome_plot_1)+
           geom_line(mapping = aes(x = date, y = value), color = '#DC0000B2', 
@@ -204,13 +204,13 @@ auto_select_function <- function(i){
      
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    size = 0.7, data = datafile_single)+
+                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
           geom_line(mapping = aes(x = date, y = fit, colour = 'Fitted'), 
-                    size = 0.7, data = outcome_plot_1)+
+                    linewidth = 0.7, data = outcome_plot_1)+
           geom_line(mapping = aes(x = date, y = value), color = '#DC0000B2', 
-                    size = 0.7, data = outcome_plot_1_2_link, show.legend = F)+
+                    linewidth = 0.7, data = outcome_plot_1_2_link, show.legend = F)+
           geom_line(mapping = aes(x = date, y = mean, colour = 'Forecasted'),
-                    size = 0.7, data = outcome_plot_2)+
+                    linewidth = 0.7, data = outcome_plot_2)+
           geom_vline(xintercept = max(outcome_plot_1_2_link$date), show.legend = F,
                      linetype = 'longdash')+
           geom_hline(yintercept = 0, show.legend = F)+
@@ -273,13 +273,13 @@ auto_select_function <- function(i){
      
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    size = 0.7, data = datafile_single)+
+                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
           geom_line(mapping = aes(x = date, y = fit, colour = 'Fitted'), 
-                    size = 0.7, data = outcome_plot_1)+
+                    linewidth = 0.7, data = outcome_plot_1)+
           geom_line(mapping = aes(x = date, y = value), color = '#DC0000B2', 
-                    size = 0.7, data = outcome_plot_1_2_link, show.legend = F)+
+                    linewidth = 0.7, data = outcome_plot_1_2_link, show.legend = F)+
           geom_line(mapping = aes(x = date, y = mean, colour = 'Forecasted'),
-                    size = 0.7, data = outcome_plot_2)+
+                    linewidth = 0.7, data = outcome_plot_2)+
           geom_vline(xintercept = max(outcome_plot_1_2_link$date), show.legend = F,
                      linetype = 'longdash')+
           geom_hline(yintercept = 0, show.legend = F)+
@@ -317,7 +317,7 @@ auto_select_function <- function(i){
           fig_stl_1 <- ggplot()+
                theme_void()+
                theme(plot.title.position = "plot", 
-                     plot.title = element_text(face = "bold", size = 14, family = "Times New Roman", hjust = 0))+
+                     plot.title = element_text(face = "bold", size = 14, hjust = 0))+
                labs(x = "Date",
                     y = 'Cases',
                     color = '',
@@ -356,13 +356,13 @@ auto_select_function <- function(i){
           
           fig1 <- ggplot()+
                geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                         size = 0.7, data = datafile_single)+
+                         linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
                geom_line(mapping = aes(x = date, y = fit, colour = 'Fitted'), 
-                         size = 0.7, data = outcome_plot_1)+
+                         linewidth = 0.7, data = outcome_plot_1)+
                geom_line(mapping = aes(x = date, y = value), color = '#DC0000B2', 
-                         size = 0.7, data = outcome_plot_1_2_link, show.legend = F)+
+                         linewidth = 0.7, data = outcome_plot_1_2_link, show.legend = F)+
                geom_line(mapping = aes(x = date, y = mean, colour = 'Forecasted'),
-                         size = 0.7, data = outcome_plot_2)+
+                         linewidth = 0.7, data = outcome_plot_2)+
                geom_ribbon(mapping = aes(x = date, ymin = lower_80, ymax = upper_80, fill = 'red'),
                            data = outcome_plot_2, alpha = 0.3, show.legend = F)+
                geom_ribbon(mapping = aes(x = date, ymin = lower_95, ymax = upper_95, fill = 'red'),
@@ -432,13 +432,13 @@ auto_select_function <- function(i){
      
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    size = 0.7, data = datafile_single)+
+                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
           geom_line(mapping = aes(x = date, y = fit, colour = 'Fitted'), 
-                    size = 0.7, data = outcome_plot_1)+
+                    linewidth = 0.7, data = outcome_plot_1)+
           geom_line(mapping = aes(x = date, y = value), color = '#DC0000B2', 
-                    size = 0.7, data = outcome_plot_1_2_link, show.legend = F)+
+                    linewidth = 0.7, data = outcome_plot_1_2_link, show.legend = F)+
           geom_line(mapping = aes(x = date, y = mean, colour = 'Forecasted'),
-                    size = 0.7, data = outcome_plot_2)+
+                    linewidth = 0.7, data = outcome_plot_2)+
           geom_ribbon(mapping = aes(x = date, ymin = lower_80, ymax = upper_80, fill = 'red'),
                       data = outcome_plot_2, alpha = 0.3, show.legend = F)+
           geom_ribbon(mapping = aes(x = date, ymin = lower_95, ymax = upper_95, fill = 'red'),
@@ -516,13 +516,13 @@ auto_select_function <- function(i){
      
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    size = 0.7, data = datafile_single)+
+                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
           geom_line(mapping = aes(x = date, y = fit, colour = 'Fitted'), 
-                    size = 0.7, data = outcome_plot_1)+
+                    linewidth = 0.7, data = outcome_plot_1)+
           geom_line(mapping = aes(x = date, y = value), color = '#DC0000B2', 
-                    size = 0.7, data = outcome_plot_1_2_link, show.legend = F)+
+                    linewidth = 0.7, data = outcome_plot_1_2_link, show.legend = F)+
           geom_line(mapping = aes(x = date, y = mean, colour = 'Forecasted'),
-                    size = 0.7, data = outcome_plot_2)+
+                    linewidth = 0.7, data = outcome_plot_2)+
           geom_ribbon(mapping = aes(x = date, ymin = lower_80, ymax = upper_80, fill = 'red'),
                       data = outcome_plot_2, alpha = 0.3, show.legend = F)+
           geom_ribbon(mapping = aes(x = date, ymin = lower_95, ymax = upper_95, fill = 'red'),
@@ -577,7 +577,7 @@ auto_select_function <- function(i){
      
      fig1 <- ggplot(data = df_mods)+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    linewidth = 0.7, data = datafile_single)+
+                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
           geom_line(mapping = aes(x = date, y = arima, colour = 'SARIMA'),
                     linewidth = 0.7)+
           geom_line(mapping = aes(x = date, y = grey, colour = 'Grey Model'),
@@ -652,9 +652,6 @@ auto_select_function <- function(i){
           tab_add_footnote('*Hybrid: Combined SARIMA, ETS, STL\nand Neural Network model', 
                            just = "left",hjust = 1,size = 10)
      
-     fig_table <- table1 + table2 + table3 +
-          plot_layout(ncol = 3)
-     
      # save --------------------------------------------------------------------
      
      fig_ts <- fig_grey_1 + fig_nnet_1 + fig_stl_1 + fig_ets_1 + fig_arima_1 + fig_hyb_1+
@@ -662,16 +659,28 @@ auto_select_function <- function(i){
           theme(legend.position = 'bottom',
                 plot.margin = margin(5, 15, 5, 5))
      
-     fig <- cowplot::plot_grid(fig_ts, fig1, fig_table, ncol = 1, rel_heights = c(3, 1, 1))
+     # fig <- cowplot::plot_grid(fig_ts, fig1, fig_table, ncol = 1, rel_heights = c(3, 1, 1))
+     fig <- ggarrange(fig_ts,
+                      fig1, 
+                      ggarrange(table1, table2, table3, ncol = 3), 
+                      ncol = 1, 
+                      heights = c(3, 1, 1))
      
      ggsave(filename = paste0('./fig/20230424/B_', disease_name[i],'.pdf'),
             fig,
             width = 14, height = 15, family = "Times New Roman",
             limitsize = FALSE, device = cairo_pdf)
+     ggsave(filename = paste0('./fig/20230424/B_', disease_name[i],'.png'),
+            fig,
+            width = 14, height = 15,
+            bg = "white",
+            limitsize = FALSE)
      fit_goodness$disease <- disease_name[i]
      
      return(fit_goodness)
 }
+
+auto_select_function(5)
 
 # run model ---------------------------------------------------------------
 
@@ -692,14 +701,13 @@ clusterEvalQ(cl, {
      library(forecastHybrid)
      library(caret)
      
+     library(ggpubr)
      # loadfonts("pdf")
      library(patchwork)
      library(Cairo)
-     library(ggpubr)
      library(paletteer) 
      library(lubridate)
      set.seed(20230424)
-     
      
      split_date_1 <- as.Date('2009/4/1')
      split_date_2 <- as.Date('2010/4/1')
