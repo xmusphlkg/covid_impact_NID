@@ -680,7 +680,7 @@ auto_select_function <- function(i){
      return(fit_goodness)
 }
 
-auto_select_function(5)
+# auto_select_function(5)
 
 # run model ---------------------------------------------------------------
 
@@ -688,7 +688,7 @@ i <- 6
 # lapply(1:26, auto_select_function)
 # auto_select_function(6)
 
-cl <- makeCluster(10)
+cl <- makeCluster(24)
 registerDoParallel(cl)
 clusterEvalQ(cl, {
      library(tidyverse)
