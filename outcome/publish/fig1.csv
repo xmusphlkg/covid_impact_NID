@@ -1,28 +1,28 @@
 disease,class,level,value
-AIDS,Blood borne and sexually transmitted diseases,B,668135
-Acute hemorrhagic conjunctivitis,Intestinal infectious diseases,C,739915
-Brucellosis,Natural focus disease,B,702954
-Dengue fever,Natural focus disease,B,93611
-Dysentery,Intestinal infectious diseases,C,2317599
-Gonorrhea,Blood borne and sexually transmitted diseases,B,1691294
-HAV,Intestinal infectious diseases,B,378150
-HBV,Blood borne and sexually transmitted diseases,B,16486035
-HCV,Blood borne and sexually transmitted diseases,B,3021146
-HEV,Intestinal infectious diseases,B,390737
+AIDS,Blood borne and sexually transmitted diseases,B,684533
+Acute hemorrhagic conjunctivitis,Intestinal infectious diseases,C,825771
+Brucellosis,Natural focus disease,B,741688
+Dengue fever,Natural focus disease,B,95193
+Dysentery,Intestinal infectious diseases,C,3899827
+Gonorrhea,Blood borne and sexually transmitted diseases,B,1995686
+HAV,Intestinal infectious diseases,B,523952
+HBV,Blood borne and sexually transmitted diseases,B,18765111
+HCV,Blood borne and sexually transmitted diseases,B,3184205
+HEV,Intestinal infectious diseases,B,430321
 HFMD,Intestinal infectious diseases,C,25329288
-HFRS,Natural focus disease,B,152574
-Hydatidosis,Natural focus disease,C,55256
-Japanese encephalitis,Natural focus disease,B,22035
-Malaria,Natural focus disease,B,78464
-Mumps,Respiratory infectious disease,C,3892586
-Other infectious diarrhea,Intestinal infectious diseases,C,15046707
-Pertussis,Respiratory infectious disease,B,146228
-Rubella,Respiratory infectious disease,C,426691
-Scarlet fever,Respiratory infectious disease,B,702495
-Syphilis,Blood borne and sexually transmitted diseases,B,6611880
-Tuberculosis,Respiratory infectious disease,B,14088255
-Typhoid fever and paratyphoid fever,Intestinal infectious diseases,B,173991
-Typhus,Natural focus disease,C,25151
+HFRS,Natural focus disease,B,178735
+Hydatidosis,Natural focus disease,C,59751
+Japanese encephalitis,Natural focus disease,B,21972
+Malaria,Natural focus disease,B,292196
+Mumps,Respiratory infectious disease,C,4416684
+Other infectious diarrhea,Intestinal infectious diseases,C,16528652
+Pertussis,Respiratory infectious disease,B,151656
+Rubella,Respiratory infectious disease,C,538456
+Scarlet fever,Respiratory infectious disease,B,763603
+Syphilis,Blood borne and sexually transmitted diseases,B,6820165
+Tuberculosis,Respiratory infectious disease,B,18671315
+Typhoid fever and paratyphoid fever,Intestinal infectious diseases,B,266819
+Typhus,Natural focus disease,C,31091
 A,legend,A,20000
 B,legend,A,2e+05
 C,legend,A,2e+06

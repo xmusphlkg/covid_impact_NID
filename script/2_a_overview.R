@@ -38,6 +38,9 @@ split_date_1 <- as.Date("2019/12/15")
 split_date_2 <- as.Date("2022/11/15")
 split_date_3 <- as.Date("2023/1/15")
 
+split_date_4 <- as.Date("2009/4/15")
+split_date_5 <- as.Date("2010/4/15")
+
 # bubble plot -------------------------------------------------------------
 
 datafile_plot <- datafile_analysis |> 
@@ -46,8 +49,10 @@ datafile_plot <- datafile_analysis |>
      mutate(disease = factor(disease_1,
                              levels = disease_list,
                              labels = disease_name),
-            phase = case_when(date < split_date_1 ~ 'Pre-epidemic',
-                              date > split_date_1 & date < split_date_2 ~ 'Epidemic',
+            phase = case_when(date < split_date_4 ~ 'Pre-epidemic',
+                              date > split_date_5 & date < split_date_1 ~ 'Pre-epidemic',
+                              date > split_date_4 & date < split_date_5 ~ 'Epidemic',
+                              date > split_date_1 & date < split_date_2 ~ 'Pandemic',
                               date > split_date_2 & date < split_date_3 ~ 'Pandemic',),
             phase = factor(phase,
                            levels = c('Pre-epidemic', 'Epidemic', 'Pandemic'))) |> 
@@ -115,8 +120,8 @@ fig1 <- ggplot(data = datafile_plot)+
               angle = 90,
               vjust = 1,
               hjust = 1)+
-     geom_rect(data = data.frame(start_date = split_date_2,
-                                 end_date = split_date_3), 
+     geom_rect(data = data.frame(start_date = c(split_date_2, split_date_4),
+                                 end_date = c(split_date_3, split_date_5)), 
                aes(xmin = start_date, 
                    xmax = end_date), 
                ymin = -Inf, 
@@ -125,13 +130,13 @@ fig1 <- ggplot(data = datafile_plot)+
                alpha = 0.2,
                show.legend = F)+
      annotate('text',
-              x = split_date_2,
+              x = c(split_date_2, split_date_4),
               y = 9e5,
               label = "Pandemic",
               family = "Times New Roman",
-              angle = 90,
+              angle = c(90, 0),
               vjust = 1,
-              hjust = 1)+
+              hjust = c(1, 0))+
      geom_rect(data = data.frame(start_date = split_date_1,
                                  end_date = split_date_2), 
                aes(xmin = start_date, 
@@ -148,8 +153,8 @@ fig1 <- ggplot(data = datafile_plot)+
               family = "Times New Roman",
               vjust = 1,
               hjust = 0)+
-     geom_rect(data = data.frame(start_date = min(datafile_plot$date)-15,
-                                 end_date = split_date_1), 
+     geom_rect(data = data.frame(start_date = c(min(datafile_plot$date), split_date_5),
+                                 end_date = c(split_date_4, split_date_1)), 
                aes(xmin = start_date, 
                    xmax = end_date), 
                ymin = -Inf, 
@@ -158,7 +163,7 @@ fig1 <- ggplot(data = datafile_plot)+
                alpha = 0.2,
                show.legend = F)+
      annotate('text',
-              x = min(datafile_plot$date)-15,
+              x = c(split_date_5, min(datafile_plot$date)) + 15,
               y = 9e5,
               label = "Pre-epidemic",
               family = "Times New Roman",

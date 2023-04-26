@@ -133,7 +133,7 @@ auto_select_function <- function(i){
      
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
+                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_1))+
           geom_line(mapping = aes(x = date, y = fit, colour = 'Fitted'), 
                     linewidth = 0.7, data = outcome_plot_1)+
           geom_line(mapping = aes(x = date, y = value), color = '#DC0000B2', 
@@ -204,7 +204,7 @@ auto_select_function <- function(i){
      
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
+                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_1))+
           geom_line(mapping = aes(x = date, y = fit, colour = 'Fitted'), 
                     linewidth = 0.7, data = outcome_plot_1)+
           geom_line(mapping = aes(x = date, y = value), color = '#DC0000B2', 
@@ -273,7 +273,7 @@ auto_select_function <- function(i){
      
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
+                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_1))+
           geom_line(mapping = aes(x = date, y = fit, colour = 'Fitted'), 
                     linewidth = 0.7, data = outcome_plot_1)+
           geom_line(mapping = aes(x = date, y = value), color = '#DC0000B2', 
@@ -356,7 +356,7 @@ auto_select_function <- function(i){
           
           fig1 <- ggplot()+
                geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                         linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
+                         linewidth = 0.7, data = filter(datafile_single, date <= split_date_1))+
                geom_line(mapping = aes(x = date, y = fit, colour = 'Fitted'), 
                          linewidth = 0.7, data = outcome_plot_1)+
                geom_line(mapping = aes(x = date, y = value), color = '#DC0000B2', 
@@ -432,7 +432,7 @@ auto_select_function <- function(i){
      
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
+                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_1))+
           geom_line(mapping = aes(x = date, y = fit, colour = 'Fitted'), 
                     linewidth = 0.7, data = outcome_plot_1)+
           geom_line(mapping = aes(x = date, y = value), color = '#DC0000B2', 
@@ -516,7 +516,7 @@ auto_select_function <- function(i){
      
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
+                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_1))+
           geom_line(mapping = aes(x = date, y = fit, colour = 'Fitted'), 
                     linewidth = 0.7, data = outcome_plot_1)+
           geom_line(mapping = aes(x = date, y = value), color = '#DC0000B2', 
@@ -577,7 +577,7 @@ auto_select_function <- function(i){
      
      fig1 <- ggplot(data = df_mods)+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_2))+
+                    linewidth = 0.7, data = filter(datafile_single, date <= split_date_1))+
           geom_line(mapping = aes(x = date, y = arima, colour = 'SARIMA'),
                     linewidth = 0.7)+
           geom_line(mapping = aes(x = date, y = grey, colour = 'Grey Model'),
