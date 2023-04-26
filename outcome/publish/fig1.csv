@@ -1,8 +1,8 @@
 disease,class,level,value
 AIDS,Blood borne and sexually transmitted diseases,B,684533
 Acute hemorrhagic conjunctivitis,Intestinal infectious diseases,C,825771
-Brucellosis,Natural focus disease,B,741688
-Dengue fever,Natural focus disease,B,95193
+Brucellosis,Natural focal disease,B,741688
+Dengue fever,Natural focal disease,B,95193
 Dysentery,Intestinal infectious diseases,C,3899827
 Gonorrhea,Blood borne and sexually transmitted diseases,B,1995686
 HAV,Intestinal infectious diseases,B,523952
@@ -10,10 +10,10 @@ HBV,Blood borne and sexually transmitted diseases,B,18765111
 HCV,Blood borne and sexually transmitted diseases,B,3184205
 HEV,Intestinal infectious diseases,B,430321
 HFMD,Intestinal infectious diseases,C,25329288
-HFRS,Natural focus disease,B,178735
-Hydatidosis,Natural focus disease,C,59751
-Japanese encephalitis,Natural focus disease,B,21972
-Malaria,Natural focus disease,B,292196
+HFRS,Natural focal disease,B,178735
+Hydatidosis,Natural focal disease,C,59751
+Japanese encephalitis,Natural focal disease,B,21972
+Malaria,Natural focal disease,B,292196
 Mumps,Respiratory infectious disease,C,4416684
 Other infectious diarrhea,Intestinal infectious diseases,C,16528652
 Pertussis,Respiratory infectious disease,B,151656
@@ -22,7 +22,7 @@ Scarlet fever,Respiratory infectious disease,B,763603
 Syphilis,Blood borne and sexually transmitted diseases,B,6820165
 Tuberculosis,Respiratory infectious disease,B,18671315
 Typhoid fever and paratyphoid fever,Intestinal infectious diseases,B,266819
-Typhus,Natural focus disease,C,31091
+Typhus,Natural focal disease,C,31091
 A,legend,A,20000
 B,legend,A,2e+05
 C,legend,A,2e+06

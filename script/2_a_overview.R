@@ -49,19 +49,19 @@ datafile_plot <- datafile_analysis |>
      mutate(disease = factor(disease_1,
                              levels = disease_list,
                              labels = disease_name),
-            phase = case_when(date < split_date_4 ~ 'Pre-epidemic',
-                              date > split_date_5 & date < split_date_1 ~ 'Pre-epidemic',
-                              date > split_date_4 & date < split_date_5 ~ 'Epidemic',
-                              date > split_date_1 & date < split_date_2 ~ 'Pandemic',
+            phase = case_when(date < split_date_4 ~ 'Pre-pandemic',
+                              date > split_date_5 & date < split_date_1 ~ 'Pre-pandemic',
+                              date > split_date_4 & date < split_date_5 ~ 'Pandemic',
+                              date > split_date_1 & date < split_date_2 ~ 'Epidemic',
                               date > split_date_2 & date < split_date_3 ~ 'Pandemic',),
             phase = factor(phase,
-                           levels = c('Pre-epidemic', 'Epidemic', 'Pandemic'))) |> 
+                           levels = c('Pre-pandemic', 'Epidemic', 'Pandemic'))) |> 
      left_join(datafile_class, by = c('disease' = 'diseasename')) |> 
      mutate(class = factor(class,
                            levels = c("Blood borne and sexually transmitted diseases",
                                       "Intestinal infectious diseases",
                                       "Respiratory infectious disease",
-                                      "Natural focus disease")))
+                                      "Natural focal disease")))
 
 datafile_bubble <- datafile_plot |> 
      group_by(disease, class, level) |> 
@@ -93,7 +93,8 @@ fig2 <- ggplot(data = datafile_plot)+
               show.legend = F,
               position = 'fill')+
      scale_fill_manual(values = fill_color)+
-     scale_y_continuous(expand = c(0, 0))+
+     scale_y_continuous(expand = c(0, 0),
+                        labels = scales::percent)+
      scale_x_date(expand = expansion(add = c(15, 90)),
                   date_breaks = '1 years',
                   date_labels = '%Y')+
@@ -103,6 +104,7 @@ fig2 <- ggplot(data = datafile_plot)+
           title = 'C')
 
 fig1 <- ggplot(data = datafile_plot)+
+     
      geom_rect(data = data.frame(start_date = split_date_3,
                                  end_date = split_date_3+90), 
                aes(xmin = start_date, 
@@ -120,8 +122,9 @@ fig1 <- ggplot(data = datafile_plot)+
               angle = 90,
               vjust = 1,
               hjust = 1)+
-     geom_rect(data = data.frame(start_date = c(split_date_2, split_date_4),
-                                 end_date = c(split_date_3, split_date_5)), 
+     
+     geom_rect(data = data.frame(start_date = split_date_2,
+                                 end_date = split_date_3), 
                aes(xmin = start_date, 
                    xmax = end_date), 
                ymin = -Inf, 
@@ -130,15 +133,16 @@ fig1 <- ggplot(data = datafile_plot)+
                alpha = 0.2,
                show.legend = F)+
      annotate('text',
-              x = c(split_date_2, split_date_4),
+              x = split_date_2,
               y = 9e5,
               label = "Pandemic",
               family = "Times New Roman",
-              angle = c(90, 0),
+              angle = 90,
               vjust = 1,
-              hjust = c(1, 0))+
-     geom_rect(data = data.frame(start_date = split_date_1,
-                                 end_date = split_date_2), 
+              hjust = 1)+
+     
+     geom_rect(data = data.frame(start_date = c(split_date_1, split_date_4),
+                                 end_date = c(split_date_2, split_date_5)), 
                aes(xmin = start_date, 
                    xmax = end_date), 
                ymin = -Inf, 
@@ -147,12 +151,13 @@ fig1 <- ggplot(data = datafile_plot)+
                alpha = 0.2,
                show.legend = F)+
      annotate('text',
-              x = split_date_1,
+              x = c(split_date_4, split_date_1),
               y = 9e5,
               label = "Epidemic",
               family = "Times New Roman",
               vjust = 1,
               hjust = 0)+
+     
      geom_rect(data = data.frame(start_date = c(min(datafile_plot$date), split_date_5),
                                  end_date = c(split_date_4, split_date_1)), 
                aes(xmin = start_date, 
@@ -169,6 +174,7 @@ fig1 <- ggplot(data = datafile_plot)+
               family = "Times New Roman",
               vjust = 1,
               hjust = 0)+
+     
      geom_line(mapping = aes(x = date,
                              y = value,
                              color = class))+
@@ -187,6 +193,7 @@ fig1 <- ggplot(data = datafile_plot)+
           y = "Monthly incidence",
           color = NULL,
           title = 'B')
+fig1
 
 fig1 + fig2 + plot_layout(ncol = 1)
 
