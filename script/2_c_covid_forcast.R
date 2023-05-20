@@ -36,11 +36,12 @@ source('./script/theme_set.R')
 
 datafile_analysis <- read.xlsx('./data/Nation.xlsx', 
                              sheet = "Sheet 1",
-                             detectDates = T)
+                             detectDates = T) %>% 
+     filter(date >= as.Date('2008/1/1'))
 
 datafile_class <- read.xlsx('./data/disease_class.xlsx')
 
-datafile_class <- read.xlsx('./outcome/model_select_A.xlsx',
+datafile_class <- read.xlsx('./outcome/appendix/model/select/2_covid_epidemic.xlsx',
                             sheet = 'result') |>
      select(D, Final) |>
      left_join(datafile_class, by = c(D = 'diseasename')) |> 
@@ -223,7 +224,7 @@ auto_analysis_function <- function(i){
           mutate_at(vars(contains('er')), as.numeric)
      
      write.xlsx(full_join(outcome_plot_2, outcome_plot_1),
-                paste0('./outcome/data/A_', datafile_class$disease_name[i], '.xlsx'))
+                paste0('./outcome/appendix/data/2_covid_epidemic/', datafile_class$disease_name[i], '.xlsx'))
      
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
@@ -291,7 +292,7 @@ stopCluster(cl)
 
 plot <- do.call(wrap_plots, outcome)
 
-ggsave('./outcome/publish/fig2.pdf',
+ggsave('./outcome/publish/fig3_covid_epidemic.pdf',
        plot + plot_layout(design = layout, guides = 'collect')&
             theme(legend.position = 'bottom'),
        family = "Times New Roman",
