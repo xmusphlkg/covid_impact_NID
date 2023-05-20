@@ -703,5 +703,5 @@ outcome <- parLapply(cl, 1:24, auto_select_function)
 stopCluster(cl)
 
 datafile_outcome <- do.call('rbind', outcome)
-write.xlsx(datafile_outcome, './outcome/appendix/model/select/2_covid_epidemic.xlsx')
+write.xlsx(datafile_outcome, './outcome/appendix/model/index/2_covid_epidemic.xlsx')
 

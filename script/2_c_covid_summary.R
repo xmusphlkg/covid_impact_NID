@@ -172,7 +172,7 @@ fig2 <- ggplot(data = datafile_plot)+
 
 fig1 + fig2 + plot_layout(widths = c(2, 1.7))
 
-ggsave('./outcome/publish/fig3.pdf',
+ggsave('./outcome/publish/fig5_covid_epidemic.pdf',
        family = "Times New Roman",
        limitsize = FALSE, device = cairo_pdf,
        width = 14, height = 10)

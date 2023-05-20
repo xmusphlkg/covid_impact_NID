@@ -20,15 +20,14 @@ scientific_10 <- function(x) {
 }
 
 datafile_class <- read.xlsx('./data/disease_class.xlsx')
-datafile_class <- read.xlsx('./outcome/model_select_B.xlsx',
+datafile_class <- read.xlsx('./outcome/appendix/model/select/3_covid_pandemic.xlsx',
                             sheet = 'result') |>
      select(D, Final) |>
      left_join(datafile_class, by = c(D = 'diseasename')) |> 
      rename(Method = 'Final') |> 
      filter(!is.na(class))
 datafile_class$id <- 1:nrow(datafile_class)
-file_list <- list.files(path = './outcome/data/',
-                        pattern = '^B_',
+file_list <- list.files(path = './outcome/appendix/data/3_covid_pandemic/',
                         full.names = T)
 
 disease_list <- c('百日咳', '丙肝', '戊肝', '布病', '登革热', 
@@ -173,7 +172,7 @@ fig2 <- ggplot(data = datafile_plot)+
 
 fig1 + fig2 + plot_layout(widths = c(2, 1.7))
 
-ggsave('./outcome/publish/fig5.pdf',
+ggsave('./outcome/publish/fig7_covid_pandemic.pdf',
        family = "Times New Roman",
        limitsize = FALSE, device = cairo_pdf,
        width = 14, height = 10)

@@ -29,7 +29,8 @@ remove(list = ls())
 
 source('./script/theme_set.R')
 
-datafile_analysis <- read.xlsx('./data/Nation.xlsx', detectDates = T)
+datafile_analysis <- read.xlsx('./data/Nation.xlsx', detectDates = T) %>% 
+     filter(date >= as.Date('2008/1/1'))
 
 split_date <- as.Date('2022/12/1')
 train_length <- 12*12 + 35
@@ -634,7 +635,7 @@ auto_select_function <- function(i){
      
      fig <- cowplot::plot_grid(fig_ts, fig1, fig_table, ncol = 1, rel_heights = c(3, 1, 1))
      
-     ggsave(filename = paste0('./fig/20221013/B_', disease_name[i],'.pdf'),
+     ggsave(filename = paste0('./outcome/appendix/figure/3_covid_pandemic/', disease_name[i],'.pdf'),
             fig,
             width = 14, height = 15, family = "Times New Roman",
             limitsize = FALSE, device = cairo_pdf)
@@ -682,5 +683,5 @@ outcome <- parLapply(cl, 1:24, auto_select_function)
 stopCluster(cl)
 
 datafile_outcome <- do.call('rbind', outcome)
-write.xlsx(datafile_outcome, './outcome/model_select_B.xlsx')
+write.xlsx(datafile_outcome, './outcome/appendix/model/index/2_covid_pandemic.xlsx')
 

@@ -36,11 +36,12 @@ source('./script/theme_set.R')
 
 datafile_analysis <- read.xlsx('./data/Nation.xlsx', 
                              sheet = "Sheet 1",
-                             detectDates = T)
+                             detectDates = T) %>% 
+     filter(date >= as.Date('2008/1/1'))
 
 datafile_class <- read.xlsx('./data/disease_class.xlsx')
 
-datafile_class <- read.xlsx('./outcome/model_select_B.xlsx',
+datafile_class <- read.xlsx('./outcome/appendix/model/select/3_covid_pandemic.xlsx',
                             sheet = 'result') |>
      select(D, Final) |>
      left_join(datafile_class, by = c(D = 'diseasename')) |> 
@@ -52,6 +53,7 @@ split_date <- as.Date("2022/11/1")
 
 train_length <- 12*14+11
 forcast_length <- 2
+test_length <- 0
 
 disease_list <- c('百日咳', '丙肝', '戊肝', '布病', '登革热', 
                   '肺结核', '风疹', '急性出血性结膜炎', '甲肝', 
@@ -222,7 +224,7 @@ auto_analysis_function <- function(i){
           mutate_at(vars(contains('er')), as.numeric)
      
      write.xlsx(full_join(outcome_plot_2, outcome_plot_1),
-                paste0('./outcome/data/B_', datafile_class$disease_name[i], '.xlsx'))
+                paste0('./outcome/appendix/data/3_covid_pandemic/', datafile_class$disease_name[i], '.xlsx'))
      
      outcome_plot_1 <- datafile_single |> 
           filter(date >= as.Date('2022-01-01'))
@@ -292,7 +294,7 @@ stopCluster(cl)
 
 plot <- do.call(wrap_plots, outcome)
 
-ggsave('./outcome/publish/fig4.pdf',
+ggsave('./outcome/publish/fig6_covid_pandemic.pdf',
        plot + plot_layout(design = layout, guides = 'collect')&
             theme(legend.position = 'bottom'),
        family = "Times New Roman",
