@@ -666,11 +666,11 @@ auto_select_function <- function(i){
                       ncol = 1, 
                       heights = c(3, 1, 1))
      
-     ggsave(filename = paste0('./fig/20230424/B_', disease_name[i],'.pdf'),
+     ggsave(filename = paste0('./outcome/appendix/figure/1_flu_epidemic/', disease_name[i],'.pdf'),
             fig,
             width = 14, height = 15, family = "Times New Roman",
             limitsize = FALSE, device = cairo_pdf)
-     ggsave(filename = paste0('./fig/20230424/B_', disease_name[i],'.png'),
+     ggsave(filename = paste0('./outcome/appendix/figure/1_flu_epidemic/', disease_name[i],'.png'),
             fig,
             width = 14, height = 15,
             bg = "white",
@@ -724,5 +724,5 @@ outcome <- parLapply(cl, 1:24, auto_select_function)
 stopCluster(cl)
 
 datafile_outcome <- do.call('rbind', outcome)
-write.xlsx(datafile_outcome, './outcome/model_select_flu.xlsx')
+write.xlsx(datafile_outcome, './outcome/appendix/model/index/1_flu_epidemic.xlsx')
 

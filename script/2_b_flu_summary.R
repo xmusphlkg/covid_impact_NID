@@ -20,15 +20,14 @@ scientific_10 <- function(x) {
 }
 
 datafile_class <- read.xlsx('./data/disease_class.xlsx')
-datafile_class <- read.xlsx('./outcome/model_select_flu.xlsx',
+datafile_class <- read.xlsx('./outcome/appendix/model/select/1_flu_epidemic.xlsx',
                             sheet = 'result') |>
      select(D, Final) |>
      left_join(datafile_class, by = c(D = 'diseasename')) |> 
      rename(Method = 'Final') |> 
      filter(!is.na(class))
 datafile_class$id <- 1:nrow(datafile_class)
-file_list <- list.files(path = './outcome/data/',
-                        pattern = '^flu_',
+file_list <- list.files(path = './outcome/appendix/data/1_flu_epidemic/',
                         full.names = T)
 
 disease_list <- c('百日咳', '丙肝', '戊肝', '布病', '登革热', 

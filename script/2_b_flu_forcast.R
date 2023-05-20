@@ -40,7 +40,7 @@ datafile_analysis <- read.xlsx('./data/Nation.xlsx',
 
 datafile_class <- read.xlsx('./data/disease_class.xlsx')
 
-datafile_class <- read.xlsx('./outcome/model_select_flu.xlsx',
+datafile_class <- read.xlsx('./outcome/appendix/model/select/1_flu_epidemic.xlsx',
                             sheet = 'result') |>
      select(D, Final) |>
      left_join(datafile_class, by = c(D = 'diseasename')) |> 
@@ -217,7 +217,7 @@ auto_analysis_function <- function(i){
           mutate_at(vars(contains('er')), as.numeric)
      
      write.xlsx(full_join(outcome_plot_2, outcome_plot_1),
-                paste0('./outcome/data/flu_', datafile_class$disease_name[i], '.xlsx'))
+                paste0('./outcome/appendix/data/1_flu_epidemic/', datafile_class$disease_name[i], '.xlsx'))
      
      outcome_plot_1 <- datafile_single |> 
           filter(date < split_date_2)
