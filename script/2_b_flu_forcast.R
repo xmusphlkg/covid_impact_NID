@@ -40,7 +40,7 @@ datafile_analysis <- read.xlsx('./data/Nation.xlsx',
 
 datafile_class <- read.xlsx('./data/disease_class.xlsx')
 
-datafile_class <- read.xlsx('./outcome/model_select_B.xlsx',
+datafile_class <- read.xlsx('./outcome/model_select_flu.xlsx',
                             sheet = 'result') |>
      select(D, Final) |>
      left_join(datafile_class, by = c(D = 'diseasename')) |> 
@@ -48,10 +48,11 @@ datafile_class <- read.xlsx('./outcome/model_select_B.xlsx',
      filter(!is.na(class))
 datafile_class$id <- 1:nrow(datafile_class)
 
-split_date <- as.Date("2022/11/1")
+split_date <- as.Date('2009/4/15')
+split_date_2 <- as.Date('2010/4/15')
 
-train_length <- 12*14+11
-forcast_length <- 2
+train_length <- 12*3+4
+forcast_length <- 12
 
 disease_list <- c('百日咳', '丙肝', '戊肝', '布病', '登革热', 
                   '肺结核', '风疹', '急性出血性结膜炎', '甲肝', 
@@ -83,7 +84,7 @@ datafile_class <- data.frame(disease_list = disease_list,
 i <- 20
 
 auto_analysis_function <- function(i){
-     set.seed(202208)
+     set.seed(202305)
      
      datafile_single <- datafile_analysis %>% 
           filter(disease_1 == datafile_class$disease_list[i]) %>% 
@@ -98,7 +99,7 @@ auto_analysis_function <- function(i){
                            disease_1 = datafile_class$disease_list[i])
           )
      
-     ## simulate date before 2020
+     ## simulate date before 2009
      df_simu <- datafile_single  %>% 
           arrange(date) %>% 
           unique() %>% 
@@ -112,11 +113,10 @@ auto_analysis_function <- function(i){
      
      ts_train_1 <- head(ts_obse_1, train_length)
      
-     
+     ## plot data before April 2019
      outcome_plot_1 <- datafile_single |> 
-          filter(date >= as.Date('2022-12-01') & 
-                      date <= as.Date('2023-01-01'))
-     max_case <- max(tail(ts_obse_1, 11))
+          filter(date > split_date & date < split_date_2)
+     max_case <- max(ts_obse_1)
      
      # Select Method ------------------------------------------------------------
      
@@ -132,8 +132,7 @@ auto_analysis_function <- function(i){
                lower_95 = as.matrix(outcome$lower[,2]),
                upper_80 = as.matrix(outcome$upper[,1]),
                upper_95 = as.matrix(outcome$upper[,2])
-          ) |> 
-               filter(date >= as.Date('2020-01-01'))
+          )
      }
      
      if (datafile_class$Method[i] == 'STL'){
@@ -146,8 +145,7 @@ auto_analysis_function <- function(i){
                lower_95 = as.matrix(outcome$lower[,2]),
                upper_80 = as.matrix(outcome$upper[,1]),
                upper_95 = as.matrix(outcome$upper[,2])
-          ) |> 
-               filter(date >= as.Date('2020-01-01'))
+          )
      }
      
      if (datafile_class$Method[i] == 'ETS'){
@@ -160,8 +158,7 @@ auto_analysis_function <- function(i){
                lower_95 = as.matrix(outcome$lower[,2]),
                upper_80 = as.matrix(outcome$upper[,1]),
                upper_95 = as.matrix(outcome$upper[,2])
-          ) |> 
-               filter(date >= as.Date('2020-01-01'))
+          )
      }
      
      if (datafile_class$Method[i] == 'Neural Network'){
@@ -176,8 +173,7 @@ auto_analysis_function <- function(i){
                lower_95 = NA,
                upper_80 = NA,
                upper_95 = NA
-          ) |> 
-               filter(date >= as.Date('2020-01-01'))
+          )
      }
      
      if (datafile_class$Method[i] == 'Grey Model'){
@@ -207,8 +203,7 @@ auto_analysis_function <- function(i){
                lower_95 = as.matrix(outcome$lower[,2]),
                upper_80 = as.matrix(outcome$upper[,1]),
                upper_95 = as.matrix(outcome$upper[,2])
-          ) |> 
-               filter(date >= as.Date('2020-01-01'))
+          )
      }
      
      max_value <- max(outcome_plot_2[,-1], max_case, na.rm = T)
@@ -222,16 +217,16 @@ auto_analysis_function <- function(i){
           mutate_at(vars(contains('er')), as.numeric)
      
      write.xlsx(full_join(outcome_plot_2, outcome_plot_1),
-                paste0('./outcome/data/B_', datafile_class$disease_name[i], '.xlsx'))
+                paste0('./outcome/data/flu_', datafile_class$disease_name[i], '.xlsx'))
      
      outcome_plot_1 <- datafile_single |> 
-          filter(date >= as.Date('2022-01-01'))
+          filter(date < split_date_2)
      
      fig1 <- ggplot()+
           geom_line(mapping = aes(x = date, y = value, colour = 'Observed'), 
-                    size = 0.7, data = outcome_plot_1)+
+                    linewidth = 0.7, data = outcome_plot_1)+
           geom_line(mapping = aes(x = date, y = mean, colour = 'Forecasted'),
-                    size = 0.7, data = outcome_plot_2)+
+                    linewidth = 0.7, data = outcome_plot_2)+
           # geom_ribbon(mapping = aes(x = date, ymin = lower_80, ymax = upper_80, fill = 'red'),
           #             data = outcome_plot_2, alpha = 0.3, show.legend = F)+
           geom_ribbon(mapping = aes(x = date, ymin = lower_95, ymax = upper_95, fill = '#E64B35FF'),
@@ -241,7 +236,7 @@ auto_analysis_function <- function(i){
           coord_cartesian(ylim = c(0, NA))+
           scale_x_date(expand = expansion(add = c(0, 30)),
                        date_labels = '%b\n%Y',
-                       breaks = seq(min(outcome_plot_1$date), max(outcome_plot_2$date)+30, by="6 months"))+
+                       breaks = seq(min(outcome_plot_1$date), max(outcome_plot_2$date)+30, by="year"))+
           scale_y_continuous(expand = c(0, 0),
                              breaks = pretty(c(min_value, max_value, 0)),
                              limits = range(pretty(c(min_value, max_value, 0))))+
@@ -260,7 +255,7 @@ auto_analysis_function <- function(i){
 
 i <- 3
 # lapply(1:26, auto_select_function)
-auto_analysis_function(20)
+auto_analysis_function(3)
 
 cl <- makeCluster(12)
 registerDoParallel(cl)
@@ -283,7 +278,7 @@ clusterEvalQ(cl, {
 })
 
 clusterExport(cl, c('datafile_analysis', 'datafile_class',
-                    'forcast_length', 'split_date', 'train_length', 'test_length',
+                    'forcast_length', 'split_date', 'train_length', 'split_date_2',
                     'fill_color', 'func_rmse', 'theme_set'), 
               envir = environment())
 outcome <- parLapply(cl, 1:24, auto_analysis_function)
@@ -292,7 +287,7 @@ stopCluster(cl)
 
 plot <- do.call(wrap_plots, outcome)
 
-ggsave('./outcome/publish/fig4.pdf',
+ggsave('./outcome/publish/fig2_flu.pdf',
        plot + plot_layout(design = layout, guides = 'collect')&
             theme(legend.position = 'bottom'),
        family = "Times New Roman",
