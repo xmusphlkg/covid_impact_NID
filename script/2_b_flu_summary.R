@@ -179,3 +179,17 @@ ggsave('./outcome/publish/fig3_flu.pdf',
        limitsize = FALSE, device = cairo_pdf,
        width = 14, height = 10)
 
+write.csv(file = './outcome/appendix/data/1_flu_epidemic/0_summary_by_disease.csv',
+          x = datafile_plot,
+          row.names = F)
+
+datafile_plot <- datafile_plot |> 
+     group_by(class) |> 
+     summarise(mean = sum(mean),
+               value = sum(value)) |> 
+     mutate(mean_change = (value - mean)/mean)
+
+write.csv(file = './outcome/appendix/data/1_flu_epidemic/0_summary_by_class.csv',
+          x = datafile_plot,
+          row.names = F)
+

@@ -100,7 +100,7 @@ fig1 <- ggplot(data = datafile_plot)+
                    width = 0.2,
                    position=position_dodge(.9),
                    show.legend = F)+
-     coord_flip()+
+     coord_flip(ylim = c(0, 1e8))+
      scale_y_continuous(trans = scales::pseudo_log_trans(base = 10),
                         breaks = c(0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8),
                         limits = c(0, NA),
@@ -177,3 +177,17 @@ ggsave('./outcome/publish/fig5_covid_epidemic.pdf',
        limitsize = FALSE, device = cairo_pdf,
        width = 14, height = 10)
 
+
+write.csv(file = './outcome/appendix/data/2_covid_epidemic/0_summary_by_disease.csv',
+          x = datafile_plot,
+          row.names = F)
+
+datafile_plot <- datafile_plot |> 
+     group_by(class) |> 
+     summarise(mean = sum(mean),
+               value = sum(value)) |> 
+     mutate(mean_change = (value - mean)/mean)
+
+write.csv(file = './outcome/appendix/data/2_covid_epidemic/0_summary_by_class.csv',
+          x = datafile_plot,
+          row.names = F)
