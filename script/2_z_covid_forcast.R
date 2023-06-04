@@ -256,7 +256,7 @@ i <- 3
 # lapply(1:26, auto_select_function)
 auto_analysis_function(23)
 
-cl <- makeCluster(10)
+cl <- makeCluster(12)
 registerDoParallel(cl)
 clusterEvalQ(cl, {
      library(tidyverse)
